@@ -53,7 +53,12 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   name.innerHTML = restaurant.name;
 
   const address = document.getElementById('restaurant-address');
-  address.innerHTML = restaurant.address;
+
+  const maplink = document.createElement('a');
+  maplink.href = 'https://www.google.com/maps/search/?api=1&query=' + restaurant.address;
+  maplink.innerHTML = restaurant.address;
+
+  address.appendChild(maplink);
 
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
@@ -161,3 +166,5 @@ getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+
