@@ -13,7 +13,7 @@ body {
   position:relative;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1150px;
+  max-width: 1040px;
 }
 ul, li {
 	font-family: Arial, Helvetica, sans-serif;
@@ -43,7 +43,7 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   min-height: 100%;
 }
 #footer {
-  background-color: #444;
+  background-color: #252831;
   color: #aaa;
   font-size: 8pt;
   letter-spacing: 1px;
@@ -106,13 +106,14 @@ nav h1 a {
   width: 100%;
   background-color: #ccc;
 }
+
 /* ====================== Restaurant Filtering ====================== */
 .filter-options {
   /* width: 100%; */
-  height: 3em;
-  background-color: #3397DB;
+  /* height: 3em; */
+  background-color: #252831;
   align-items: center;
-  padding: .25em;
+  padding: .5em;
 }
 .filter-options h2 {
   color: white;
@@ -130,7 +131,7 @@ nav h1 a {
   letter-spacing: 0;
   margin: 10px;
   padding: 0 10px;
-  width: 200px;
+  width: 309px;
 }
 
 /* ====================== Restaurant Listing ====================== */
@@ -148,21 +149,21 @@ nav h1 a {
   border: 2px solid #ccc;
   font-family: Arial,sans-serif;
   margin: 15px;
-  min-height: 380px;
-  padding: 0 30px 25px;
+  min-height: 300px;
+  padding: 1rem;
   text-align: left;
-  width: 270px;
+  width: 265px;
 }
 #restaurants-list .restaurant-img {
   background-color: #ccc;
   display: block;
   margin: 0;
   max-width: 100%;
-  min-height: 248px;
+  /* min-height: 248px; */
   min-width: 100%;
 }
 #restaurants-list li h1 {
-  color: #f18200;
+  color: #EA4235;
   font-family: Arial,sans-serif;
   font-size: 14pt;
   font-weight: 200;
@@ -176,13 +177,13 @@ nav h1 a {
   font-size: 11pt;
 }
 #restaurants-list li a {
-  background-color: orange;
+  /* background-color: orange; */
   border-bottom: 3px solid #eee;
   color: #fff;
   display: inline-block;
   font-size: 10pt;
-  margin: 15px 0 0;
-  padding: 8px 30px 10px;
+  /* margin: 15px 0 0;
+  padding: 8px 30px 10px; */
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
@@ -278,4 +279,15 @@ nav h1 a {
 }
 #restaurant-hours td {
   color: #666;
+}
+
+/* ====================== Mobile Breakpoints ====================== */
+@media only screen and (max-width: 708px) {
+  #map {
+      display: none;
+  }
+
+  nav h1 a {
+    letter-spacing: 0ch;
+  }
 }
