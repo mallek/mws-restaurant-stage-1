@@ -138,14 +138,28 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
 
+  const picture = document.createElement('picture');
+  const webPsource = document.createElement('source');
+  webPsource.srcset = DBHelper.convertToWebP(DBHelper.imageThumbUrlForRestaurant(restaurant));
+  webPsource.type = 'image/webp'
+
+  const jpegSource = document.createElement('source');
+  jpegSource.srcset = DBHelper.imageThumbUrlForRestaurant(restaurant);
+  webPsource.type = 'image/jpeg'
+
+
   const image = document.createElement('img');
   image.className = 'restaurant-img';
   image.alt = restaurant.name;
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.src = DBHelper.imageThumbUrlForRestaurant(restaurant);
+
+  picture.appendChild(webPsource);
+  picture.appendChild(jpegSource);
+  picture.appendChild(image);
 
   const link = document.createElement('a');
   link.href = DBHelper.urlForRestaurant(restaurant);
-  link.appendChild(image);
+  link.appendChild(picture);
   li.append(link);
 
   const name = document.createElement('h1');
@@ -181,3 +195,4 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     self.markers.push(marker);
   });
 }
+

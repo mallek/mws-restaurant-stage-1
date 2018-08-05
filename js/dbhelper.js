@@ -153,6 +153,14 @@ class DBHelper {
     return (`/img/${restaurant.photograph}`);
   }
 
+  static imageThumbUrlForRestaurant(restaurant) {
+    return (`/img/thumb/${restaurant.photograph}`);
+  }
+
+  static convertToWebP(imageUrl) {
+    return imageUrl.split('.').slice(0, -1) + '.webp';
+  }
+
   /**
    * Map marker for a restaurant.
    */

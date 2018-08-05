@@ -332,3 +332,12 @@ nav h1 a {
   font-size: 16px;
 }
 
+.hidden {
+  position:absolute;
+  left:-20000px;
+  top:auto;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+}
+
