@@ -22,11 +22,13 @@
       </h1>
     </nav>
     <!-- Beginning breadcrumb -->
-    <ul id="breadcrumb">
-      <li>
-        <a href="/">Home</a>
-      </li>
-    </ul>
+    <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+      <ul id="breadcrumb">
+        <li>
+          <a href="/">Home</a>
+        </li>
+      </ul>
+    </nav>
     <!-- End breadcrumb -->
     <!-- End nav -->
   </header>
@@ -39,19 +41,23 @@
     <!-- End map -->
     <!-- Beginning restaurant -->
     <section id="restaurant-container">
-      <h1 id="restaurant-name"></h1>
+      <h3 id="restaurant-name"></h3>
       <p id="restaurant-cuisine"></p>
       <div class="row resturantHours">
         <div class="column2">
           <img id="restaurant-img">
         </div>
-        <div class='column2 hiddenSmall' tabindex="-1">
-          <div id="map" tabindex="-1"></div>
+        <div class='column2'>
+          <div id="map" role="application" aria-label="Map to restaurant" tabindex="0"></div>
         </div>
       </div>
       <div class="row">
-        <div class="column2"><table id="restaurant-hours"></table></div>
-        <div class="column2"><p id="restaurant-address"></p></div>
+        <div class="column2">
+          <table id="restaurant-hours"></table>
+        </div>
+        <div class="column2">
+          <p id="restaurant-address"></p>
+        </div>
       </div>
 
       <!-- <table id="restaurant-hours"></table> -->

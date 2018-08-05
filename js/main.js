@@ -147,22 +147,21 @@ createRestaurantHTML = (restaurant) => {
   jpegSource.srcset = DBHelper.imageThumbUrlForRestaurant(restaurant);
   webPsource.type = 'image/jpeg'
 
-
   const image = document.createElement('img');
   image.className = 'restaurant-img';
-  image.alt = restaurant.name;
+  image.alt = 'Image of ' + restaurant.name;
   image.src = DBHelper.imageThumbUrlForRestaurant(restaurant);
 
   picture.appendChild(webPsource);
   picture.appendChild(jpegSource);
   picture.appendChild(image);
 
-  const link = document.createElement('a');
-  link.href = DBHelper.urlForRestaurant(restaurant);
-  link.appendChild(picture);
-  li.append(link);
+  // const link = document.createElement('a');
+  // link.href = DBHelper.urlForRestaurant(restaurant);
+  // link.appendChild(picture);
+  li.append(picture);
 
-  const name = document.createElement('h1');
+  const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
   li.append(name);
 
@@ -174,10 +173,10 @@ createRestaurantHTML = (restaurant) => {
   address.innerHTML = restaurant.address;
   li.append(address);
 
-  // const more = document.createElement('a');
-  // more.innerHTML = 'View Details';
-  // more.href = DBHelper.urlForRestaurant(restaurant);
-  // li.append(more)
+  const more = document.createElement('a');
+  more.innerHTML = 'View Details';
+  more.href = DBHelper.urlForRestaurant(restaurant);
+  li.append(more)
 
   return li
 }
