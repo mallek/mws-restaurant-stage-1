@@ -1,3 +1,5 @@
+# Credits to HaiyangXu @ https://gist.github.com/HaiyangXu/ec88cbdce3cdbac7b8d5
+#
 # -*- coding: utf-8 -*-
 #test on python 3.4 ,python of lower version  has different module organization.
 import http.server
@@ -25,3 +27,4 @@ httpd = socketserver.TCPServer(("", PORT), Handler)
 
 print("serving at port", PORT)
 httpd.serve_forever()
+

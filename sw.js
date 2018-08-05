@@ -66,3 +66,6 @@ self.addEventListener('fetch', function (event) {
       })
   );
 });
+
+//followed step by step from
+//https://developers.google.com/web/fundamentals/primers/service-workers/
