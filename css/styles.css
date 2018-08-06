@@ -189,6 +189,15 @@ nav h1 a {
   text-transform: uppercase;
 }
 
+.view-more-button {
+  background-color: #252831;
+  padding: 1em;
+  width: 100%;
+  color: orange;
+  font-size: 16px;
+  margin-top: .25em;
+}
+
 /* ====================== Restaurant Details ====================== */
 .inside header {
   /* position: fixed; */

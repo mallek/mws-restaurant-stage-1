@@ -173,9 +173,12 @@ createRestaurantHTML = (restaurant) => {
   address.innerHTML = restaurant.address;
   li.append(address);
 
-  const more = document.createElement('a');
+  const more = document.createElement('button');
+  more.className = "view-more-button"
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
+  more.dataset.resturantId = restaurant.id;
+  more.onclick = viewMoreButtonClick;
   li.append(more)
 
   return li
@@ -194,4 +197,12 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     self.markers.push(marker);
   });
 }
+
+// Wire up view details button
+function viewMoreButtonClick(event) {
+  document.location = '/restaurant.html?id=' + event.target.dataset.resturantId;
+}
+
+
+
 
