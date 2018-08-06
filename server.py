@@ -24,7 +24,8 @@ Handler.extensions_map={
     }
 
 httpd = socketserver.TCPServer(("", PORT), Handler)
+hostmessage = 'http://localhost:' + str(PORT)
 
-print("serving at port", PORT)
+print("serving folder at", hostmessage)
 httpd.serve_forever()
 
