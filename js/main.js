@@ -204,6 +204,22 @@ function viewMoreButtonClick(event) {
   document.location = '/restaurant.html?id=' + event.target.dataset.resturantId;
 }
 
+// var data = null;
+
+// var xhr = new XMLHttpRequest();
+// xhr.withCredentials = true;
+
+// xhr.addEventListener("readystatechange", function () {
+//   if (this.readyState === 4) {
+//     console.log(this.responseText);
+//   }
+// });
+
+// xhr.open("GET", "http://localhost:1337/restaurants");
+// // xhr.setRequestHeader("Cache-Control", "no-cache");
+
+// xhr.send(data);
+
 
 
 
