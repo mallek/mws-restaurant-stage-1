@@ -1,8 +1,59 @@
 /**
  * Common database helper functions.
  */
-class DBHelper {
 
+const dbPromise = idb.open('keyval-store', 1, upgradeDB => {
+  upgradeDB.createObjectStore('keyval');
+});
+
+const idbKeyval = {
+  get(key) {
+    return dbPromise.then(db => {
+      return db.transaction('keyval')
+        .objectStore('keyval').get(key);
+    });
+  },
+  set(key, val) {
+    return dbPromise.then(db => {
+      const tx = db.transaction('keyval', 'readwrite');
+      tx.objectStore('keyval').put(val, key);
+      return tx.complete;
+    });
+  },
+  delete(key) {
+    return dbPromise.then(db => {
+      const tx = db.transaction('keyval', 'readwrite');
+      tx.objectStore('keyval').delete(key);
+      return tx.complete;
+    });
+  },
+  clear() {
+    return dbPromise.then(db => {
+      const tx = db.transaction('keyval', 'readwrite');
+      tx.objectStore('keyval').clear();
+      return tx.complete;
+    });
+  },
+  keys() {
+    return dbPromise.then(db => {
+      const tx = db.transaction('keyval');
+      const keys = [];
+      const store = tx.objectStore('keyval');
+
+      // This would be store.getAllKeys(), but it isn't supported by Edge or Safari.
+      // openKeyCursor isn't supported by Safari, so we fall back
+      (store.iterateKeyCursor || store.iterateCursor).call(store, cursor => {
+        if (!cursor) return;
+        keys.push(cursor.key);
+        cursor.continue();
+      });
+
+      return tx.complete.then(() => keys);
+    });
+  }
+};
+
+class DBHelper {
   /**
    * Database URL.
    * Change this to restaurants.json file location on your server.
@@ -16,19 +67,30 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        debugger;
-        const restaurants = JSON.parse(xhr.responseText);
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
+
+    //check indexdb
+    idbKeyval.get('restaurants').then(data => {
+      if (data) {
+        console.log('we have data:' + data);
+        callback(null, data);
+      } else {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', DBHelper.DATABASE_URL);
+        xhr.onload = () => {
+          if (xhr.status === 200) { // Got a success response from server!
+
+            const restaurants = JSON.parse(xhr.responseText);
+            idbKeyval.set('restaurants', restaurants);
+
+            callback(null, restaurants);
+          } else { // Oops!. Got an error from server.
+            const error = (`Request failed. Returned status of ${xhr.status}`);
+            callback(error, null);
+          }
+        };
+        xhr.send();
       }
-    };
-    xhr.send();
+    });
   }
 
   /**
@@ -112,7 +174,6 @@ class DBHelper {
       if (error) {
         callback(error, null);
       } else {
-        debugger;
         // Get all neighborhoods from all restaurants
         const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
         // Remove duplicates from neighborhoods
@@ -131,7 +192,6 @@ class DBHelper {
       if (error) {
         callback(error, null);
       } else {
-        debugger;
         // Get all cuisines from all restaurants
         const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type)
         // Remove duplicates from cuisines
@@ -152,11 +212,11 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}`);
+    return (`/img/${restaurant.photograph}.jpg`);
   }
 
   static imageThumbUrlForRestaurant(restaurant) {
-    return (`/img/thumb/${restaurant.photograph}`);
+    return (`/img/thumb/${restaurant.photograph}.jpg`);
   }
 
   static convertToWebP(imageUrl) {
@@ -172,7 +232,8 @@ class DBHelper {
       title: restaurant.name,
       url: DBHelper.urlForRestaurant(restaurant),
       map: map,
-      animation: google.maps.Animation.DROP}
+      animation: google.maps.Animation.DROP
+    }
     );
     return marker;
   }
