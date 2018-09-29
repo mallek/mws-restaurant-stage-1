@@ -1,21 +1,28 @@
 let restaurant;
+let reviews;
 var map;
 
 /**
  * Initialize Google map, called from HTML.
  */
-window.initMap = () => {
+window.initApp = () => {
     fetchRestaurantFromURL((error, restaurant) => {
         if (error) { // Got an error!
             console.error(error);
         } else {
-            self.map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 16,
-                center: restaurant.latlng,
-                scrollwheel: false
-            });
+            // self.map = new google.maps.Map(document.getElementById('map'), {
+            //     zoom: 16,
+            //     center: restaurant.latlng,
+            //     scrollwheel: false
+            // });
             fillBreadcrumb();
-            DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+            //DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+        }
+    });
+
+    fetchReviewsFromURL((error) => {
+        if (error) { // Got an error!
+            console.error(error);
         }
     });
 }
@@ -41,6 +48,32 @@ fetchRestaurantFromURL = (callback) => {
             }
             fillRestaurantHTML();
             callback(null, restaurant)
+        });
+    }
+}
+
+
+/**
+ * Get current reviews from page URL.
+ */
+fetchReviewsFromURL = (callback) => {
+    if (self.reviews) { // restaurant already fetched!
+        callback(null, self.reviews)
+        return;
+    }
+    const id = getParameterByName('id');
+    if (!id) { // no id found in URL
+        error = 'No restaurant id in URL'
+        callback(error, null);
+    } else {
+        DBHelper.fetchReviewsByRestaurantId(id, (error, reviews) => {
+            self.reviews = reviews;
+            if (!reviews) {
+                console.error(error);
+                return;
+            }
+            fillReviewsHTML();
+            callback(null, reviews)
         });
     }
 }
@@ -79,7 +112,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     }
 
     // fill reviews
-    fillReviewsHTML();
+    //fillReviewsHTML();
 }
 
 /**
@@ -105,7 +138,8 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (reviews = self.reviews) => {
+    console.log(reviews);
     const container = document.getElementById('reviews-container');
     const title = document.createElement('h3');
     title.innerHTML = 'Reviews';
@@ -116,12 +150,18 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
         noReviews.innerHTML = 'No reviews yet!';
         container.appendChild(noReviews);
         return;
+    } else {
+        const ul = document.getElementById('reviews-list');
+        if (reviews.length) {
+            reviews.forEach(review => {
+                ul.appendChild(createReviewHTML(review));
+            });
+        } else {
+            ul.appendChild(createReviewHTML(review));
+        }
+        container.appendChild(ul);
     }
-    const ul = document.getElementById('reviews-list');
-    reviews.forEach(review => {
-        ul.appendChild(createReviewHTML(review));
-    });
-    container.appendChild(ul);
+
 }
 
 /**
