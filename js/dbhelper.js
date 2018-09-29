@@ -60,7 +60,19 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
-    return `http://localhost:${port}/restaurants`;
+    return `http://localhost:${port}`;
+  }
+
+  static get RestaurantsApi() {
+    return this.DATABASE_URL + '/restaurants'
+  }
+
+  static get ReviewsApi() {
+    return this.DATABASE_URL + '/reviews'
+  }
+
+  static clearResturantCache() {
+    idbKeyval.delete('restaurants');
   }
 
   /**
@@ -75,11 +87,12 @@ class DBHelper {
         callback(null, data);
       } else {
         let xhr = new XMLHttpRequest();
-        xhr.open('GET', DBHelper.DATABASE_URL);
+        xhr.open('GET', DBHelper.RestaurantsApi);
         xhr.onload = () => {
           if (xhr.status === 200) { // Got a success response from server!
 
             const restaurants = JSON.parse(xhr.responseText);
+            console.log(restaurants);
             idbKeyval.set('restaurants', restaurants);
 
             callback(null, restaurants);
@@ -91,6 +104,27 @@ class DBHelper {
         xhr.send();
       }
     });
+  }
+
+  static toggleFavoriteResturant(id, status, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", DBHelper.RestaurantsApi + "/" + id + "?is_favorite=" + status);
+    xhr.onload = () => {
+      if (xhr.status === 200) { // Got a success response from server!
+        const restaurants = JSON.parse(xhr.responseText);
+        callback(null, restaurants);
+      } else { // Oops!. Got an error from server.
+        const error = (`Request failed. Returned status of ${xhr.status}`);
+        callback(error, null);
+      }
+    };
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === 4) {
+        console.log(this.responseText);
+      }
+    });
+    xhr.send();
   }
 
   /**

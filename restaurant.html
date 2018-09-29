@@ -7,12 +7,22 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <!-- Normalize.css for better cross-browser consistency -->
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <!-- Main CSS file -->
   <link rel="stylesheet" href="css/styles.css" type="text/css">
   <title>Restaurant Info</title>
 </head>
 
 <body class="inside">
+  <div id="networkStatus" class="network-status">
+    <div style="font-size: 9pt; padding-left: 1em;">
+      <span>
+        Your device appears to be<span class="bold">&nbsp;offline</span>.
+        Certain features are unavailable while offline. All changes made while offline must be synced when you
+        reconnect to a network.
+      </span>
+    </div>
+  </div>
   <!-- Beginning header -->
   <header>
     <!-- Beginning nav -->
@@ -53,9 +63,11 @@
       </div>
       <div class="row">
         <div class="column2">
+
           <table id="restaurant-hours"></table>
         </div>
         <div class="column2">
+          <span>Favorite:</span> <span id="favSpan" onclick="toggleFavorite(this)" class="fa fa-thumbs-up"></span>
           <p id="restaurant-address"></p>
         </div>
       </div>
@@ -86,6 +98,7 @@
   <script type="text/javascript" src="js/dbhelper.js"></script>
   <!-- Main javascript file -->
   <script type="text/javascript" src="js/restaurant_info.js"></script>
+  <script type="application/javascript" charset="utf-8" src="js/shared.js"></script>
   <!-- Google Maps -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwjeEj4brT0v5dQC4xjy5UpdtZJ1w7T0w&libraries=places&callback=initMap"></script>
   <!-- End scripts -->

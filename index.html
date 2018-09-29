@@ -54,6 +54,7 @@
   <script type="application/javascript" src="js/idb.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
+  <script type="application/javascript" charset="utf-8" src="js/shared.js"></script>
   <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwjeEj4brT0v5dQC4xjy5UpdtZJ1w7T0w&libraries=places&callback=initMap"></script> -->
   <!-- <noscript>This application requires Javascript to be enabled</noscript> -->
 
@@ -76,20 +77,6 @@
       });
     });
   }
-
-  // Adding in offline UX
-  // https://medium.com/@argo49/how-to-add-an-offline-notification-to-your-pwa-c11ee640822b
-  window.addEventListener("load", () => {
-  function handleNetworkChange(event) {
-    if (navigator.onLine) {
-      document.body.classList.remove("offline");
-    } else {
-      document.body.classList.add("offline");
-    }
-  }
-  window.addEventListener("online", handleNetworkChange);
-  window.addEventListener("offline", handleNetworkChange);
-});
 
   updateRestaurants();
 </script>

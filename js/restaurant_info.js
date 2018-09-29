@@ -71,7 +71,13 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   // fill operating hours
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
-  }
+    }
+
+    console.log(restaurant.is_favorite === "false")
+    if (restaurant.is_favorite === "false") {
+        var el = document.getElementById('favSpan');
+        el.classList.toggle("fa-thumbs-down");
+    }
   // fill reviews
   fillReviewsHTML();
 }
@@ -166,6 +172,26 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+function toggleFavorite(x) {
+    DBHelper.clearResturantCache();
+
+    var _this = x;
+    var toggleState = true;
+    const id = getParameterByName('id');
+    _this.classList.toggle("fa-thumbs-down");
+
+    if (_this.classList.contains("fa-thumbs-down")) {
+      toggleState = false;
+    }
+
+    DBHelper.toggleFavoriteResturant(id, toggleState, (error, restaurant) => {
+      if (!restaurant) {
+        console.error(error);
+        return;
+        }
+    });
 }
 
 
