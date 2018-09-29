@@ -1,7 +1,6 @@
 /**
  * Common database helper functions.
  */
-
 const dbPromise = idb.open('keyval-store', 1, upgradeDB => {
   upgradeDB.createObjectStore('keyval');
 });
@@ -130,6 +129,35 @@ class DBHelper {
         xhr.send();
       }
     });
+  }
+
+
+  static saveReview(review, callback) {
+    console.log(review);
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.onload = () => {
+      debugger;
+      if (xhr.status === 201) { // Got a success response from server!
+        const savedReview = JSON.parse(xhr.responseText);
+        console.log(savedReview);
+        idbKeyval.get('reviews').then(cachedReviews => {
+          let newReviewSet = cachedReviews.concat(savedReview)
+          idbKeyval.set('reviews', newReviewSet);
+          callback(null, newReviewSet);
+        });
+      } else { // Oops!. Got an error from server.
+        const error = (`Request failed. Returned status of ${xhr.status}`);
+        idbKeyval.set('tempReview', review);
+        callback(error, null);
+      }
+    };
+
+    xhr.open("POST", "http://localhost:1337/reviews/");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.send(JSON.stringify(review));
   }
 
   static toggleFavoriteResturant(id, status, callback) {

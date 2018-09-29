@@ -54,7 +54,6 @@ fetchRestaurantFromURL = (callback) => {
     }
 }
 
-
 /**
  * Get current reviews from page URL.
  */
@@ -78,6 +77,11 @@ fetchReviewsFromURL = (callback) => {
             callback(null, reviews)
         });
     }
+}
+
+saveReviewForResturant = (form, callback) => {
+    console.log(form);
+    // DBHelper.saveReview(review);
 }
 
 /**
@@ -137,6 +141,20 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
     }
 }
 
+//Built with help from following guide
+//http://www.developerdrive.com/2013/08/turning-the-querystring-into-a-json-object-using-javascript/
+function QueryStringToJSON(stringToParse) {
+  var pairs = stringToParse.split('&');
+
+  var result = {};
+  pairs.forEach(function(pair) {
+      pair = pair.split('=');
+      result[pair[0]] = decodeURIComponent(pair[1] || '');
+  });
+
+  return JSON.parse(JSON.stringify(result));
+}
+
 
 fillReviewFormHTML = () => {
     const id = getParameterByName('id');
@@ -147,10 +165,24 @@ fillReviewFormHTML = () => {
 
     const form = document.createElement('form');
     form.style = "display: inline-grid";
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        var formElement = document.querySelector('form');
+        var formElementQueryString = new URLSearchParams(new FormData(formElement)).toString()
+        var data = QueryStringToJSON(formElementQueryString);
+        data.restaurant_id = parseInt(data.restaurant_id);
+        data.rating = parseInt(data.rating);
+        console.log(data);
+        DBHelper.saveReview(data, (res) => {
+            console.log(res);
+        });
+        formElement.reset();
+        //fillReviewsHTML();
+    };
 
     const idHidden = document.createElement('input');
     idHidden.type = "hidden";
-    idHidden.name = "id";
+    idHidden.name = "restaurant_id";
     idHidden.value = id;
 
     //Name Textbox and label
@@ -173,16 +205,17 @@ fillReviewFormHTML = () => {
     reviewRatingInput.type = "text";
     reviewRatingInput.name = "rating";
     reviewRatingInput.maxLength = 1;
+    reviewRatingInput.style = "width:20px;"
 
     //Comments Textarea and label
     const reviewCommentLabel = document.createElement('label')
-    reviewCommentLabel.htmlFor = "comment";
+    reviewCommentLabel.htmlFor = "comments";
     reviewCommentLabel.innerHTML = "What would you like to share?";
 
     const reviewCommentInput = document.createElement('textarea')
-    reviewCommentInput.id = "comment";
+    reviewCommentInput.id = "comments";
     reviewCommentInput.type = "text";
-    reviewCommentInput.name = "comment";
+    reviewCommentInput.name = "comments";
     reviewCommentInput.style = "height:100px";
 
     const reviewSubmitButton = document.createElement('input')
@@ -210,7 +243,6 @@ fillReviewFormHTML = () => {
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.reviews) => {
-    console.log(reviews);
     const container = document.getElementById('reviews-container');
     const title = document.createElement('h3');
     title.innerHTML = 'Reviews';
@@ -243,10 +275,6 @@ createReviewHTML = (review) => {
     const name = document.createElement('p');
     name.innerHTML = review.name;
     li.appendChild(name);
-
-    const date = document.createElement('p');
-    date.innerHTML = review.date;
-    li.appendChild(date);
 
     const rating = document.createElement('p');
     rating.innerHTML = `Rating: ${review.rating}`;

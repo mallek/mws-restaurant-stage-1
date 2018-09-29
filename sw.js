@@ -21,8 +21,8 @@ var REQUIRED_FILES = [
   '/js/main.js',
   '/js/dbhelper.js',
   '/js/restaurant_info.js',
-  'restaurant.html',
-  'offline.html'
+  '/restaurant.html',
+  '/offline.html'
 ];
 
 self.addEventListener('install', function (event) {
