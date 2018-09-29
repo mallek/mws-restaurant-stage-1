@@ -354,3 +354,24 @@ nav h1 a {
   text-align: left;
 }
 
+.responsive {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes showOffline {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+body.offline > .network-status {
+  line-height: 2.0;
+    animation: showOffline 550ms ease-in-out both;
+    display: block;
+    color: #fff;
+    background: #b80210;
+}
+
+ .network-status {
+  display: none;
+}

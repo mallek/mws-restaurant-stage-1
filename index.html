@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-
 <head>
   <meta charset="UTF-8">
   <link rel="manifest" href="manifest.json">
@@ -15,6 +13,14 @@
 </head>
 
 <body>
+    <div id="networkStatus" class="network-status">
+        <div style="font-size: 9pt; padding-left: 1em;">
+                <span>
+                    Your device appears to be<span class="bold">&nbsp;offline</span>.
+                    Certain features are unavailable while offline. All changes made while offline must be synced when you reconnect to a network.
+                </span>
+        </div>
+    </div>
   <header>
     <nav>
       <h1>
@@ -25,7 +31,9 @@
 
   <main id="maincontent">
     <section id="map-container hiddenSmall">
-      <div id="map" role="application" aria-label="Map of restaurants" tabindex="0"></div>
+      <div id="map" role="application" aria-label="Map of restaurants" tabindex="0">
+        <img src="img/map.jpg" class="responsive" alt="map of new york restaurants">
+      </div>
     </section>
     <section>
       <div class="filter-options">
@@ -68,6 +76,20 @@
       });
     });
   }
+
+  // Adding in offline UX
+  // https://medium.com/@argo49/how-to-add-an-offline-notification-to-your-pwa-c11ee640822b
+  window.addEventListener("load", () => {
+  function handleNetworkChange(event) {
+    if (navigator.onLine) {
+      document.body.classList.remove("offline");
+    } else {
+      document.body.classList.add("offline");
+    }
+  }
+  window.addEventListener("online", handleNetworkChange);
+  window.addEventListener("offline", handleNetworkChange);
+});
 
   updateRestaurants();
 </script>
