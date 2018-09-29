@@ -1,7 +1,6 @@
 /**
  * Common database helper functions.
  */
-
 const dbPromise = idb.open('keyval-store', 1, upgradeDB => {
   upgradeDB.createObjectStore('keyval');
 });
@@ -60,26 +59,38 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
-    return `http://localhost:${port}/restaurants`;
+    return `http://localhost:${port}`;
+  }
+
+  static get RestaurantsApi() {
+    return this.DATABASE_URL + '/restaurants'
+  }
+
+  static get ReviewsApi() {
+    return this.DATABASE_URL + '/reviews'
+  }
+
+  static clearResturantCache() {
+    idbKeyval.delete('restaurants');
   }
 
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-
     //check indexdb
     idbKeyval.get('restaurants').then(data => {
       if (data) {
-        console.log('we have data:' + data);
+        console.log('we have restaurants data:' + data.length);
         callback(null, data);
       } else {
         let xhr = new XMLHttpRequest();
-        xhr.open('GET', DBHelper.DATABASE_URL);
+        xhr.open('GET', DBHelper.RestaurantsApi);
         xhr.onload = () => {
           if (xhr.status === 200) { // Got a success response from server!
 
             const restaurants = JSON.parse(xhr.responseText);
+         //   console.log(restaurants);
             idbKeyval.set('restaurants', restaurants);
 
             callback(null, restaurants);
@@ -91,6 +102,112 @@ class DBHelper {
         xhr.send();
       }
     });
+  }
+
+  static fetchReviews(callback) {
+    //check indexdb
+    idbKeyval.get('reviews').then(data => {
+      if (data) {
+        console.log('we have review data:' + data.length);
+        callback(null, data);
+      } else {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', DBHelper.ReviewsApi);
+        xhr.onload = () => {
+          if (xhr.status === 200) { // Got a success response from server!
+
+            const reviews = JSON.parse(xhr.responseText);
+          //  console.log(reviews);
+            idbKeyval.set('reviews', reviews);
+
+            callback(null, reviews);
+          } else { // Oops!. Got an error from server.
+            const error = (`Request failed. Returned status of ${xhr.status}`);
+            callback(error, null);
+          }
+        };
+        xhr.send();
+      }
+    });
+  }
+
+  static syncReviews() {
+    idbKeyval.get('tempReview').then(tempReviews => {
+      if (tempReviews) {
+    //    console.log(tempReviews);
+        if (tempReviews.length) {
+          tempReviews.foreach(review => {
+            this.saveReview(review, (e) => {
+              console.log(e)
+            });
+          })
+        } else {
+          this.saveReview(tempReviews, (e) => {
+            console.log(e)
+          });
+        }
+
+        idbKeyval.delete('tempReview').then(() => {
+          console.log("Deleted Temp Review after syncing")
+        });
+
+      } else {
+        console.log('No Temp Reviews to sync')
+        return;
+      }
+
+    });
+  }
+
+  static saveReview(review, callback) {
+    console.log(review);
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.onload = () => {
+      if (xhr.status === 201) { // Got a success response from server!
+        //console.log(xhr.responseText);
+        const savedReview = JSON.parse(xhr.responseText);
+        console.log(savedReview);
+        idbKeyval.get('reviews').then(cachedReviews => {
+          let newReviewSet = cachedReviews.concat(savedReview)
+          idbKeyval.set('reviews', newReviewSet);
+          callback(null, newReviewSet);
+        });
+      }
+    };
+
+    xhr.onerror = (error) => {
+      idbKeyval.set('tempReview', review);
+      console.log(`Error from HTTP request. ${xhr.status}: ${xhr.statusText}`);
+      callback(error, null);
+    };
+
+    xhr.open("POST", DBHelper.ReviewsApi);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.send(JSON.stringify(review));
+  }
+
+  static toggleFavoriteResturant(id, status, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", DBHelper.RestaurantsApi + "/" + id + "?is_favorite=" + status);
+    xhr.onload = () => {
+      if (xhr.status === 200) { // Got a success response from server!
+        const restaurants = JSON.parse(xhr.responseText);
+        callback(null, restaurants);
+      } else { // Oops!. Got an error from server.
+        const error = (`Request failed. Returned status of ${xhr.status}`);
+        callback(error, null);
+      }
+    };
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === 4) {
+        console.log(this.responseText);
+      }
+    });
+    xhr.send();
   }
 
   /**
@@ -107,6 +224,22 @@ class DBHelper {
           callback(null, restaurant);
         } else { // Restaurant does not exist in the database
           callback('Restaurant does not exist', null);
+        }
+      }
+    });
+  }
+
+  static fetchReviewsByRestaurantId(id, callback) {
+    // fetch all restaurants with proper error handling.
+    DBHelper.fetchReviews((error, reviews) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        const review = reviews.filter(r => r.restaurant_id == id);
+        if (review) { // Got the reviews
+          callback(null, review);
+        } else { // reviews does not exist in the database
+          callback('reviews does not exist', null);
         }
       }
     });

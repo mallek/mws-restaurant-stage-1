@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-
 <head>
   <meta charset="UTF-8">
   <link rel="manifest" href="manifest.json">
@@ -15,6 +13,14 @@
 </head>
 
 <body>
+    <div id="networkStatus" class="network-status">
+        <div style="font-size: 9pt; padding-left: 1em;">
+                <span>
+                    Your device appears to be<span class="bold">&nbsp;offline</span>.
+                    Certain features are unavailable while offline. All changes made while offline must be synced when you reconnect to a network.
+                </span>
+        </div>
+    </div>
   <header>
     <nav>
       <h1>
@@ -25,7 +31,9 @@
 
   <main id="maincontent">
     <section id="map-container hiddenSmall">
-      <div id="map" role="application" aria-label="Map of restaurants" tabindex="0"></div>
+      <div id="map" role="application" aria-label="Map of restaurants" tabindex="0">
+        <img src="img/map.jpg" class="responsive" alt="map of new york restaurants">
+      </div>
     </section>
     <section>
       <div class="filter-options">
@@ -46,6 +54,7 @@
   <script type="application/javascript" src="js/idb.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
+  <script type="application/javascript" charset="utf-8" src="js/shared.js"></script>
   <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwjeEj4brT0v5dQC4xjy5UpdtZJ1w7T0w&libraries=places&callback=initMap"></script> -->
   <!-- <noscript>This application requires Javascript to be enabled</noscript> -->
 
@@ -59,16 +68,6 @@
 </body>
 
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('sw.js').then(function (registration) {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      }, function (err) {
-        console.log('ServiceWorker registration failed: ', err);
-      });
-    });
-  }
-
   updateRestaurants();
 </script>
 

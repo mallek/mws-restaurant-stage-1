@@ -3,13 +3,26 @@
 var CACHE_NAME = 'restaurants-cache-v1';
 var REQUIRED_FILES = [
   '/',
+  '/manifest.json',
+  '/img/map.jpg',
+  '/img/1.jpg',
+  '/img/2.jpg',
+  '/img/3.jpg',
+  '/img/4.jpg',
+  '/img/5.jpg',
+  '/img/6.jpg',
+  '/img/7.jpg',
+  '/img/8.jpg',
+  '/img/9.jpg',
+  '/img/10.jpg',
+  '/img/undefined.jpg',
   '/css/styles.css',
   '/js/idb.js',
   '/js/main.js',
   '/js/dbhelper.js',
   '/js/restaurant_info.js',
-  'restaurant.html',
-  'offline.html'
+  '/restaurant.html',
+  '/offline.html'
 ];
 
 self.addEventListener('install', function (event) {
@@ -53,36 +66,12 @@ self.addEventListener('fetch', function (event) {
           return response;
         });
       }).catch(function (e) {
-        console.log(e)
+        // console.log(e)
         return caches.match('offline.html');
       })
     );
   }
 
-
-  function unableToResolve() {
-    /* There's a couple of things we can do here.
-       - Test the Accept header and then return one of the `offlineFundamentals`
-         e.g: `return caches.match('/some/cached/image.png')`
-       - You should also consider the origin. It's easier to decide what
-         "unavailable" means for requests against your origins than for requests
-         against a third party, such as an ad provider
-       - Generate a Response programmaticaly, as shown below, and return that
-    */
-
-    console.log('WORKER: fetch request failed in both cache and network.');
-
-    /* Here we're creating a response programmatically. The first parameter is the
-       response body, and the second one defines the options for the response.
-    */
-    return new Response('<h1>Service Unavailable</h1>', {
-      status: 503,
-      statusText: 'Service Unavailable',
-      headers: new Headers({
-        'Content-Type': 'text/html'
-      })
-    });
-  }
 });
 
 
