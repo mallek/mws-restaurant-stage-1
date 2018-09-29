@@ -27,6 +27,8 @@ window.initApp = () => {
             console.error(error);
         }
     });
+
+    DBHelper.syncReviews();
 }
 
 /**
@@ -77,11 +79,6 @@ fetchReviewsFromURL = (callback) => {
             callback(null, reviews)
         });
     }
-}
-
-saveReviewForResturant = (form, callback) => {
-    console.log(form);
-    // DBHelper.saveReview(review);
 }
 
 /**
@@ -172,7 +169,7 @@ fillReviewFormHTML = () => {
         var data = QueryStringToJSON(formElementQueryString);
         data.restaurant_id = parseInt(data.restaurant_id);
         data.rating = parseInt(data.rating);
-        console.log(data);
+        // console.log(data);
         DBHelper.saveReview(data, (res) => {
             console.log(res);
         });

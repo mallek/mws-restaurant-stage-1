@@ -90,7 +90,7 @@ class DBHelper {
           if (xhr.status === 200) { // Got a success response from server!
 
             const restaurants = JSON.parse(xhr.responseText);
-            console.log(restaurants);
+         //   console.log(restaurants);
             idbKeyval.set('restaurants', restaurants);
 
             callback(null, restaurants);
@@ -117,7 +117,7 @@ class DBHelper {
           if (xhr.status === 200) { // Got a success response from server!
 
             const reviews = JSON.parse(xhr.responseText);
-            console.log(reviews);
+          //  console.log(reviews);
             idbKeyval.set('reviews', reviews);
 
             callback(null, reviews);
@@ -131,6 +131,33 @@ class DBHelper {
     });
   }
 
+  static syncReviews() {
+    idbKeyval.get('tempReview').then(tempReviews => {
+      if (tempReviews) {
+    //    console.log(tempReviews);
+        if (tempReviews.length) {
+          tempReviews.foreach(review => {
+            this.saveReview(review, (e) => {
+              console.log(e)
+            });
+          })
+        } else {
+          this.saveReview(tempReviews, (e) => {
+            console.log(e)
+          });
+        }
+
+        idbKeyval.delete('tempReview').then(() => {
+          console.log("Deleted Temp Review after syncing")
+        });
+
+      } else {
+        console.log('No Temp Reviews to sync')
+        return;
+      }
+
+    });
+  }
 
   static saveReview(review, callback) {
     console.log(review);
@@ -138,8 +165,8 @@ class DBHelper {
     xhr.withCredentials = true;
 
     xhr.onload = () => {
-      debugger;
       if (xhr.status === 201) { // Got a success response from server!
+        //console.log(xhr.responseText);
         const savedReview = JSON.parse(xhr.responseText);
         console.log(savedReview);
         idbKeyval.get('reviews').then(cachedReviews => {
@@ -147,14 +174,16 @@ class DBHelper {
           idbKeyval.set('reviews', newReviewSet);
           callback(null, newReviewSet);
         });
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        idbKeyval.set('tempReview', review);
-        callback(error, null);
       }
     };
 
-    xhr.open("POST", "http://localhost:1337/reviews/");
+    xhr.onerror = (error) => {
+      idbKeyval.set('tempReview', review);
+      console.log(`Error from HTTP request. ${xhr.status}: ${xhr.statusText}`);
+      callback(error, null);
+    };
+
+    xhr.open("POST", DBHelper.ReviewsApi);
     xhr.setRequestHeader("Content-Type", "application/json");
 
     xhr.send(JSON.stringify(review));
