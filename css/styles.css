@@ -375,3 +375,9 @@ body.offline > .network-status {
  .network-status {
   display: none;
 }
+
+#review-form > form > label
+{
+  font-size: .75em;
+  font-weight: 400;
+}

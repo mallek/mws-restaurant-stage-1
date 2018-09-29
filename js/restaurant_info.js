@@ -20,6 +20,8 @@ window.initApp = () => {
         }
     });
 
+    fillReviewFormHTML();
+
     fetchReviewsFromURL((error) => {
         if (error) { // Got an error!
             console.error(error);
@@ -133,6 +135,75 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 
         hours.appendChild(row);
     }
+}
+
+
+fillReviewFormHTML = () => {
+    const id = getParameterByName('id');
+
+    let formDiv = document.getElementById('review-form');
+    const reviewTitle = document.createElement('h3');
+    reviewTitle.innerHTML = "Leave your review";
+
+    const form = document.createElement('form');
+    form.style = "display: inline-grid";
+
+    const idHidden = document.createElement('input');
+    idHidden.type = "hidden";
+    idHidden.name = "id";
+    idHidden.value = id;
+
+    //Name Textbox and label
+    const reviewNameLabel = document.createElement('label')
+    reviewNameLabel.htmlFor = "name";
+    reviewNameLabel.innerHTML = "Name";
+
+    const reviewNameInput = document.createElement('input')
+    reviewNameInput.id = "name";
+    reviewNameInput.type = "text";
+    reviewNameInput.name = "name";
+
+    //Review Textbox and label
+    const reviewRatingLabel = document.createElement('label')
+    reviewRatingLabel.htmlFor = "rating";
+    reviewRatingLabel.innerHTML = "Rating (1 - 5)";
+
+    const reviewRatingInput = document.createElement('input')
+    reviewRatingInput.id = "rating";
+    reviewRatingInput.type = "text";
+    reviewRatingInput.name = "rating";
+    reviewRatingInput.maxLength = 1;
+
+    //Comments Textarea and label
+    const reviewCommentLabel = document.createElement('label')
+    reviewCommentLabel.htmlFor = "comment";
+    reviewCommentLabel.innerHTML = "What would you like to share?";
+
+    const reviewCommentInput = document.createElement('textarea')
+    reviewCommentInput.id = "comment";
+    reviewCommentInput.type = "text";
+    reviewCommentInput.name = "comment";
+    reviewCommentInput.style = "height:100px";
+
+    const reviewSubmitButton = document.createElement('input')
+    reviewSubmitButton.type = "submit";
+    reviewSubmitButton.name = "submit";
+    reviewSubmitButton.id = "reviewSubmitButton";
+    reviewSubmitButton.value = "Submit Review";
+    reviewSubmitButton.style = "height:20px;margin-top:5px;"
+
+    form.appendChild(idHidden);
+    form.appendChild(reviewNameLabel);
+    form.appendChild(reviewNameInput);
+    form.appendChild(reviewRatingLabel);
+    form.appendChild(reviewRatingInput);
+    form.appendChild(reviewCommentLabel);
+    form.appendChild(reviewCommentInput);
+    form.appendChild(reviewSubmitButton);
+
+
+    formDiv.appendChild(reviewTitle);
+    formDiv.appendChild(form);
 }
 
 /**
