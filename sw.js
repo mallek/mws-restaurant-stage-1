@@ -3,6 +3,7 @@
 var CACHE_NAME = 'restaurants-cache-v1';
 var REQUIRED_FILES = [
   '/',
+  '/manifest.json',
   '/img/map.jpg',
   '/img/1.jpg',
   '/img/2.jpg',
